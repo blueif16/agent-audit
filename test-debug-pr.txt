@@ -1,0 +1,1 @@
+test: debug open_pr.sh git log check
