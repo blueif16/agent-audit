@@ -35,7 +35,6 @@ async def discover_pages(root_url: str) -> list[dict]:
             headers=headers,
             json=payload
         ) as response:
-            response.raise_for_status()
             data = await response.json()
 
             # Firecrawl /map returns {success: true, links: [{url, title}, ...]}
