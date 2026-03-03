@@ -1,2 +1,10 @@
 .env
-.claude/worktrees/
+__pycache__/
+*.pyc
+.pytest_cache/
+tests/fixtures/*.png
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

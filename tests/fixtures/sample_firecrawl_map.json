@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://example.com/",
+    "title": "Acme Corp - Home"
+  },
+  {
+    "url": "https://example.com/pricing",
+    "title": "Pricing Plans"
+  },
+  {
+    "url": "https://example.com/login",
+    "title": "Sign In"
+  },
+  {
+    "url": "https://example.com/checkout",
+    "title": "Checkout"
+  },
+  {
+    "url": "https://example.com/search",
+    "title": "Search Results"
+  },
+  {
+    "url": "https://example.com/contact",
+    "title": "Contact Us"
+  },
+  {
+    "url": "https://example.com/blog/post-47",
+    "title": "Why We Love Cats"
+  },
+  {
+    "url": "https://example.com/terms",
+    "title": "Terms of Service"
+  },
+  {
+    "url": "https://example.com/privacy",
+    "title": "Privacy Policy"
+  },
+  {
+    "url": "https://example.com/about",
+    "title": "About Us"
+  }
+]
