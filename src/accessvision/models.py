@@ -24,7 +24,7 @@ class Violation:
     severity: SeverityLevel
     description: str
     remediation_hint: str
-    source: str = "vision"  # "vision" or "axe"
+    detected_by: str  # "axe-core" or "vision"
 
 
 @dataclass
@@ -32,7 +32,7 @@ class PageCapture:
     """Complete capture data for a single page."""
     url: str
     title: str
-    priority_score: int  # 1-10, from Phase 1 ranking
+    priority_score: int  # 1-10, assigned during discovery
     reason: str  # Why this page was prioritized
     screenshot: bytes  # PNG from Playwright
     markdown_description: str  # from Firecrawl
@@ -44,7 +44,9 @@ class PageCapture:
 @dataclass
 class PageAudit:
     """Complete audit results for a single page."""
-    page_capture: PageCapture
+    url: str
+    title: str
+    priority_score: int
     violations: list[Violation]
     annotated_screenshot: bytes  # PNG with visual markers
     solution_pr: str  # Markdown fix document
@@ -58,16 +60,16 @@ class PageAudit:
 
     @property
     def composite_score(self) -> int:
-        """Calculate priority_score × severity_weight for sorting."""
-        return self.page_capture.priority_score * self.max_severity.value
+        """Calculate priority × severity weight for report ordering."""
+        return self.priority_score * self.max_severity.value
 
 
 def composite_score(priority_score: int, max_severity: SeverityLevel) -> int:
-    """Calculate composite score for page ranking.
+    """Calculate composite score for page ordering.
 
     Args:
-        priority_score: Page importance (1-10)
-        max_severity: Highest violation severity on the page
+        priority_score: Page priority (1-10) from discovery phase
+        max_severity: Highest severity level among page violations
 
     Returns:
         Composite score (priority × severity weight)

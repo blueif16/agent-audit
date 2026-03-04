@@ -7,13 +7,15 @@ import sys
 
 async def run_audit(url: str, pages: int, output: str):
     """Run the complete accessibility audit pipeline."""
-    # TODO: Wire up full pipeline in Slice 6
-    print(f"Auditing {url} (top {pages} pages) → {output}")
-    print("Pipeline not yet implemented.")
+    print(f"AccessVision: Auditing {url}", file=sys.stderr)
+    print(f"Pages to audit: {pages}", file=sys.stderr)
+    print(f"Output: {output}", file=sys.stderr)
+    # Pipeline orchestration will be wired here in Slice 6
+    print("Pipeline not yet implemented.", file=sys.stderr)
 
 
 def main():
-    """Parse arguments and run the audit."""
+    """CLI entrypoint."""
     parser = argparse.ArgumentParser(
         description="AccessVision - AI-powered visual WCAG accessibility auditing"
     )
@@ -22,7 +24,7 @@ def main():
         "--pages", "-n",
         type=int,
         default=5,
-        help="Number of top pages to audit (default: 5)"
+        help="Number of pages to audit (default: 5)"
     )
     parser.add_argument(
         "--output", "-o",

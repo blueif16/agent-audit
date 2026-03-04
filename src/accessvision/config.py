@@ -1,4 +1,4 @@
-"""Configuration and environment management with worktree-aware .env loading."""
+"""Configuration management with worktree-aware .env loading."""
 
 import os
 import subprocess
@@ -18,32 +18,28 @@ def _find_main_worktree() -> Path:
 
         for line in result.stdout.splitlines():
             if line.startswith("worktree "):
-                # First worktree entry is always the main worktree
-                return Path(line.split("worktree ", 1)[1])
+                worktree_path = line.split("worktree ", 1)[1]
+                # Check if this is the main worktree (has .git directory, not file)
+                git_path = Path(worktree_path) / ".git"
+                if git_path.is_dir():
+                    return Path(worktree_path)
 
-        # Fallback: if not in a worktree, use current directory
+        # Fallback: if no main worktree found, use current directory
         return Path.cwd()
     except (subprocess.CalledProcessError, FileNotFoundError):
-        # Not a git repo or git not available
+        # Not in a git repo or git not available
         return Path.cwd()
 
 
-def _load_env():
-    """Load environment variables from main worktree .env file."""
-    main_worktree = _find_main_worktree()
-    env_path = main_worktree / ".env"
+# Load environment from main worktree
+_main_worktree = _find_main_worktree()
+_env_path = _main_worktree / ".env"
 
-    if env_path.exists():
-        load_dotenv(env_path)
-    else:
-        # Try .env.example as fallback for documentation
-        example_path = main_worktree / ".env.example"
-        if example_path.exists():
-            load_dotenv(example_path)
-
-
-# Load environment on module import
-_load_env()
+if _env_path.exists():
+    load_dotenv(_env_path)
+else:
+    # Try loading from current directory as fallback
+    load_dotenv()
 
 
 # API Keys
@@ -51,15 +47,16 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
 
 # Model names
-GEMINI_FLASH = "gemini-3-flash-preview"
-GEMINI_PRO = "gemini-3.1-pro-preview"
-NANO_BANANA_PRO = "gemini-3-pro-image"
-NANO_BANANA_2 = "gemini-3.1-flash-image"
+GEMINI_FLASH_MODEL = "gemini-3-flash-preview"
+GEMINI_PRO_MODEL = "gemini-3.1-pro-preview"
+NANO_BANANA_MODEL = "gemini-3-pro-image"
 
 # Default settings
 DEFAULT_N_PAGES = 5
+SCREENSHOT_WIDTH = 1280
+SCREENSHOT_HEIGHT = 936
 
-# Validate required keys
+
 def validate_config():
     """Raise an error if required API keys are missing."""
     missing = []
@@ -71,5 +68,5 @@ def validate_config():
     if missing:
         raise ValueError(
             f"Missing required environment variables: {', '.join(missing)}. "
-            f"Please create a .env file in the main worktree with these keys."
+            f"Please set them in {_env_path} or your environment."
         )

@@ -4,18 +4,27 @@ import pytest
 
 
 @pytest.fixture
-def sample_page_capture():
-    """Mock PageCapture for testing."""
-    from accessvision.models import PageCapture
+def sample_violation_dict():
+    """Hand-written violation for testing."""
+    return {
+        "id": "v1",
+        "element_index": 14,
+        "box_2d": [780, 350, 830, 550],
+        "criterion": "2.4.7",
+        "criterion_name": "Focus Visible",
+        "severity": "Critical",
+        "description": "Submit button has no visible focus indicator",
+        "remediation_hint": "Add :focus-visible outline style",
+        "detected_by": "vision"
+    }
 
-    return PageCapture(
-        url="https://example.com/test",
-        title="Test Page",
-        priority_score=8,
-        reason="High-traffic page",
-        screenshot=b"fake_png_data",
-        markdown_description="# Test Page\n\nSample content",
-        axe_results={"violations": [], "passes": []},
-        element_map=[],
-        accessibility_tree={}
-    )
+
+@pytest.fixture
+def sample_page_data():
+    """Sample page data for testing."""
+    return {
+        "url": "https://example.com/checkout",
+        "title": "Checkout",
+        "priority_score": 10,
+        "reason": "Revenue-critical form flow"
+    }
