@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "accessvision"
 version = "0.1.0"
 description = "AI-powered visual WCAG accessibility auditing"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
     "playwright>=1.40.0",
     "firecrawl-py>=0.0.16",
@@ -22,9 +22,14 @@ dev = [
     "pytest-asyncio>=0.21.0",
 ]
 
+[project.scripts]
+accessvision = "accessvision.__main__:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+pythonpath = ["src"]
 testpaths = ["tests"]
+python_files = ["test_*.py"]

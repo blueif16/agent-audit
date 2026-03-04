@@ -20,8 +20,8 @@ def sample_violation_dict():
 
 
 @pytest.fixture
-def sample_page_dict():
-    """Hand-written page data for testing."""
+def sample_page_data():
+    """Sample page data for testing."""
     return {
         "url": "https://example.com/checkout",
         "title": "Checkout",
