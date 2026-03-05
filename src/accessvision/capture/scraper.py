@@ -21,7 +21,7 @@ async def scrape_page(url: str) -> Dict[str, Any]:
 
     def _scrape():
         app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
-        result = app.scrape_url(url, params={'formats': ['markdown']})
+        result = app.scrape(url, formats=['markdown'])
         return result
 
     try:
@@ -32,7 +32,24 @@ async def scrape_page(url: str) -> Dict[str, Any]:
     except asyncio.TimeoutError:
         raise RuntimeError(f"Firecrawl scrape timed out for {url}") from None
 
+    # Handle different Firecrawl response formats
+    markdown = ''
+    metadata = {}
+    if hasattr(result, 'markdown'):
+        markdown = result.markdown or ''
+    elif hasattr(result, 'data') and isinstance(result.data, dict):
+        markdown = result.data.get('markdown', '')
+
+    if hasattr(result, 'metadata'):
+        meta = result.metadata
+        if hasattr(meta, '__dict__'):
+            metadata = vars(meta)
+        elif isinstance(meta, dict):
+            metadata = meta
+    elif hasattr(result, 'data') and isinstance(result.data, dict):
+        metadata = result.data.get('metadata', {})
+
     return {
-        'markdown': result.get('markdown', ''),
-        'metadata': result.get('metadata', {})
+        'markdown': markdown,
+        'metadata': metadata
     }

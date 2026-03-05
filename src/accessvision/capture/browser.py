@@ -35,8 +35,9 @@ async def capture_page(url: str) -> Dict[str, Any]:
             # Extract element map
             element_map = await _extract_element_map(page)
 
-            # Get accessibility tree
-            a11y_tree = await page.accessibility.snapshot(interesting_only=True)
+            # Get accessibility tree using new ariaSnapshot API
+            body = page.locator('body')
+            a11y_tree = await body.aria_snapshot()
 
             return {
                 'screenshot': screenshot,

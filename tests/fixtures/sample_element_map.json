@@ -1,0 +1,44 @@
+[
+  {
+    "index": 0,
+    "tag": "h1",
+    "role": null,
+    "text": "Example Domain",
+    "alt": null,
+    "aria_label": null,
+    "aria_describedby": null,
+    "href": null,
+    "type": null,
+    "name": null,
+    "placeholder": null,
+    "bbox": {
+      "x": 256,
+      "y": 140,
+      "w": 768,
+      "h": 28
+    },
+    "visible": true,
+    "focusable": false
+  },
+  {
+    "index": 1,
+    "tag": "a",
+    "role": null,
+    "text": "Learn more",
+    "alt": null,
+    "aria_label": null,
+    "aria_describedby": null,
+    "href": "https://iana.org/domains/example",
+    "type": null,
+    "name": null,
+    "placeholder": null,
+    "bbox": {
+      "x": 256,
+      "y": 218,
+      "w": 82,
+      "h": 18
+    },
+    "visible": true,
+    "focusable": true
+  }
+]
