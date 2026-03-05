@@ -85,7 +85,7 @@ def build_vision_audit_prompt(
         bbox = elem.get("bbox", {})
         bbox_str = f"bbox=({bbox.get('x', 0)},{bbox.get('y', 0)},{bbox.get('w', 0)}x{bbox.get('h', 0)})" if bbox else "no bbox"
         text = elem.get("text", "")[:30] or "(no text)"
-        aria = elem.get("aria_label", "")[:20] or "(no aria)"
+        aria = (elem.get("aria_label") or "")[:20] or "(no aria)"
         element_summary += f"  [{i}] <{elem.get('tag', '?')}> '{text}' aria='{aria}' {bbox_str}\n"
     if len(element_map) > 20:
         element_summary += f"  ... and {len(element_map) - 20} more elements\n"

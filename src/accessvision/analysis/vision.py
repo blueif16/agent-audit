@@ -1,9 +1,12 @@
 """Vision analysis module - Gemini 3.1 Pro WCAG audit."""
 
 import json
+from io import BytesIO
 from typing import Any
 
 from google import genai
+from google.genai import types
+from PIL import Image
 
 from accessvision import config
 from accessvision.models import PageCapture, SeverityLevel, Violation
@@ -36,18 +39,20 @@ async def analyze_page_vision(
     # Upload screenshot to Gemini
     screenshot_bytes = page_capture.screenshot
 
+    # Convert bytes to PIL Image for the new API
+    screenshot_image = Image.open(BytesIO(screenshot_bytes))
+
     # Call Gemini 3.1 Pro with screenshot + prompt
     response = client.models.generate_content(
         model=config.GEMINI_PRO_MODEL,
         contents=[
-            genai.content.Image(
-                bytes=screenshot_bytes),
+            screenshot_image,
             prompt_text,
         ],
-        config={
-            "thinking": {"type": "MEDIUM"},
-            "response_mime_type": "application/json",
-        },
+        config=types.GenerateContentConfig(
+            thinking_config=types.ThinkingConfig(thinking_level="medium"),
+            response_mime_type="application/json",
+        ),
     )
 
     # Parse the JSON response
