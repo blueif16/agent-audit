@@ -81,3 +81,34 @@ async def test_discover_pages_api_failure():
 
         with pytest.raises(ValueError, match="Firecrawl /map failed"):
             await discover_pages("https://example.com")
+
+
+# ============ Tier 2: Integration tests with real API keys ============
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_discover_pages_integration():
+    """Integration test: discover pages with real Firecrawl API."""
+    # Skip if no API key
+    pytest.importorskip("aiohttp")
+
+    from accessvision.config import FIRECRAWL_API_KEY
+    if not FIRECRAWL_API_KEY:
+        pytest.skip("FIRECRAWL_API_KEY not set")
+
+    # Use a simple test site
+    try:
+        result = await discover_pages("https://example.com")
+    except ValueError as e:
+        if "Unauthorized" in str(e) or "Invalid token" in str(e):
+            pytest.skip(f"FIRECRAWL_API_KEY invalid: {e}")
+        raise
+
+    # Assertions
+    assert isinstance(result, list)
+    assert len(result) > 0
+    # Each should have url and title
+    for page in result:
+        assert "url" in page
+        assert page["url"]
+        assert "title" in page

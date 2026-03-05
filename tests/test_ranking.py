@@ -124,3 +124,39 @@ async def test_rank_pages_returns_at_most_n():
 
         # Should return exactly 5 pages
         assert len(result) == 5
+
+
+# ============ Tier 2: Integration tests with real API keys ============
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_rank_pages_integration():
+    """Integration test: rank pages with real Gemini API."""
+    from accessvision.config import GOOGLE_API_KEY
+    if not GOOGLE_API_KEY:
+        pytest.skip("GOOGLE_API_KEY not set")
+
+    input_pages = [
+        {"url": "https://example.com/", "title": "Home"},
+        {"url": "https://example.com/about", "title": "About Us"},
+        {"url": "https://example.com/contact", "title": "Contact"},
+        {"url": "https://example.com/blog", "title": "Blog"}
+    ]
+
+    try:
+        result = await rank_pages(input_pages, n=3)
+    except Exception as e:
+        if "API_KEY_INVALID" in str(e) or "API key not valid" in str(e):
+            pytest.skip(f"GOOGLE_API_KEY invalid: {e}")
+        raise
+
+    # Assertions
+    assert isinstance(result, list)
+    assert len(result) <= 3
+    for page in result:
+        assert "url" in page
+        assert "title" in page
+        assert "priority_score" in page
+        assert "reason" in page
+        # Validate score range
+        assert 1 <= page["priority_score"] <= 10

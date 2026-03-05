@@ -44,11 +44,19 @@ async def discover_pages(root_url: str) -> list[dict]:
             links = data.get("links", [])
 
             # Normalize to our expected format
-            return [
-                {
-                    "url": link.get("url", ""),
-                    "title": link.get("title", "")
-                }
-                for link in links
-                if link.get("url")
-            ]
+            # Firecrawl returns either: [{"url": "...", "title": "..."}] or ["...", "..."]
+            result = []
+            for link in links:
+                if isinstance(link, dict):
+                    url = link.get("url", "")
+                    title = link.get("title", "")
+                elif isinstance(link, str):
+                    url = link
+                    title = ""
+                else:
+                    continue
+
+                if url:
+                    result.append({"url": url, "title": title})
+
+            return result
