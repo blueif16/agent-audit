@@ -1,1 +1,1 @@
-"""Final report assembly and HTML generation."""
+"""Report assembly and HTML generation."""

@@ -1,1 +1,1 @@
-"""Output generation - annotated screenshots and solution PRs."""
+"""Output generation - annotations and solution PRs."""

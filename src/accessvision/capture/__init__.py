@@ -1,1 +1,1 @@
-"""Page capture pipeline - Firecrawl scraping + Playwright automation."""
+"""Page capture pipeline - screenshots, scraping, and accessibility data."""

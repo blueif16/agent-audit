@@ -1,1 +1,1 @@
-"""Vision-based WCAG analysis and violation detection."""
+"""Vision-based WCAG analysis."""
