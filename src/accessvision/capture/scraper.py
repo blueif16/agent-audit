@@ -16,7 +16,7 @@ async def scrape_page(url: str) -> Dict[str, Any]:
     Returns:
         Dict with 'markdown' and 'metadata' keys
     """
-    # Firecrawl SDK is synchronous, run in executor
+    # Firecrawl SDK is synchronous, run in executor with timeout
     loop = asyncio.get_event_loop()
 
     def _scrape():
@@ -24,7 +24,13 @@ async def scrape_page(url: str) -> Dict[str, Any]:
         result = app.scrape_url(url, params={'formats': ['markdown']})
         return result
 
-    result = await loop.run_in_executor(None, _scrape)
+    try:
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, _scrape),
+            timeout=60.0
+        )
+    except asyncio.TimeoutError:
+        raise RuntimeError(f"Firecrawl scrape timed out for {url}") from None
 
     return {
         'markdown': result.get('markdown', ''),

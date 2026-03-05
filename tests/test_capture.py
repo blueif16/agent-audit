@@ -68,8 +68,8 @@ async def test_pipeline_assembly():
         }
     ]
 
-    with patch('accessvision.capture.pipeline.scrape_page') as mock_scrape, \
-         patch('accessvision.capture.pipeline.capture_page') as mock_capture:
+    with patch('accessvision.capture.pipeline.scrape_page', new_callable=AsyncMock) as mock_scrape, \
+         patch('accessvision.capture.pipeline.capture_page', new_callable=AsyncMock) as mock_capture:
 
         mock_scrape.return_value = {
             'markdown': '# Page 1',

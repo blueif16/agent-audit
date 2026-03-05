@@ -1,6 +1,5 @@
 """Playwright-based browser automation for screenshots and accessibility data."""
 
-import asyncio
 from typing import Dict, Any, List
 from playwright.async_api import async_playwright, Page
 
@@ -51,17 +50,23 @@ async def capture_page(url: str) -> Dict[str, Any]:
 
 async def _run_axe_scan(page: Page) -> Dict[str, Any]:
     """Inject axe-core and run WCAG 2.2 AA scan."""
-    # Inject axe-core from CDN
-    await page.add_script_tag(url='https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.7.2/axe.min.js')
+    try:
+        # Inject axe-core from CDN (latest stable version)
+        await page.add_script_tag(url='https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js')
+    except Exception as e:
+        raise RuntimeError(f"Failed to inject axe-core script: {e}") from e
 
-    # Run scan targeting WCAG 2.2 AA
-    results = await page.evaluate("""
-        () => {
-            return axe.run(document, {
-                runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag22aa'] }
-            });
-        }
-    """)
+    try:
+        # Run scan targeting WCAG 2.2 AA
+        results = await page.evaluate("""
+            () => {
+                return axe.run(document, {
+                    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag22aa'] }
+                });
+            }
+        """)
+    except Exception as e:
+        raise RuntimeError(f"Failed to execute axe-core scan: {e}") from e
 
     return results
 

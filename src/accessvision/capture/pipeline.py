@@ -17,14 +17,22 @@ async def capture_pages(ranked_pages: List[Dict[str, Any]]) -> List[PageCapture]
     Returns:
         List of PageCapture objects
     """
-    tasks = [_capture_single_page(page_info) for page_info in ranked_pages]
+    # Limit concurrency to avoid resource/rate-limit spikes
+    semaphore = asyncio.Semaphore(5)
+
+    async def _bounded_capture(page_info: Dict[str, Any]) -> PageCapture:
+        async with semaphore:
+            return await _capture_single_page(page_info)
+
+    tasks = [_bounded_capture(page_info) for page_info in ranked_pages]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     # Filter out exceptions and return successful captures
     captures = []
     for i, result in enumerate(results):
         if isinstance(result, Exception):
-            print(f"Error capturing {ranked_pages[i]['url']}: {result}")
+            url = ranked_pages[i].get('url', '<unknown>')
+            print(f"Error capturing {url}: {result}")
         else:
             captures.append(result)
 

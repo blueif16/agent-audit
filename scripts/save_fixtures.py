@@ -6,7 +6,6 @@ from pathlib import Path
 
 from accessvision.capture.scraper import scrape_page
 from accessvision.capture.browser import capture_page
-from accessvision.capture.pipeline import capture_pages
 
 
 FIXTURES_DIR = Path(__file__).parent.parent / 'tests' / 'fixtures'
@@ -19,8 +18,10 @@ async def main():
     print(f"Capturing {url}...")
 
     # Run scraper and browser in parallel
-    scrape_result = await scrape_page(url)
-    browser_result = await capture_page(url)
+    scrape_result, browser_result = await asyncio.gather(
+        scrape_page(url),
+        capture_page(url)
+    )
 
     # Save individual outputs
     FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -50,7 +51,7 @@ async def main():
     scrape_path.write_text(json.dumps(scrape_result, indent=2))
     print(f"✓ Saved {scrape_path}")
 
-    # Full PageCapture
+    # Full PageCapture (screenshot excluded — saved separately as PNG)
     page_capture_data = {
         'url': url,
         'title': scrape_result['metadata'].get('title', 'Example'),
